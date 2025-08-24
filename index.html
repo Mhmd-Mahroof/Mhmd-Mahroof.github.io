@@ -1003,6 +1003,502 @@
         }
       }
     </style>
+    <style>
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-container {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow: hidden;
+        position: relative;
+        transform: scale(0.7) translateY(50px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+      }
+
+      .modal-overlay.show .modal-container {
+        transform: scale(1) translateY(0);
+      }
+
+      .modal-header {
+        text-align: center;
+        padding: 3rem 2rem 1rem;
+        position: relative;
+      }
+
+      .modal-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-1);
+        opacity: 0.1;
+        z-index: -1;
+      }
+
+      .success-modal .modal-header::before {
+        background: var(--gradient-3);
+      }
+
+      .error-modal .modal-header::before {
+        background: var(--gradient-2);
+      }
+
+      .modal-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        font-size: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .success-icon {
+        background: var(--gradient-3);
+        animation: successPulse 2s ease-in-out infinite;
+      }
+
+      .error-icon {
+        background: var(--gradient-2);
+        animation: errorShake 0.5s ease-in-out;
+      }
+
+      @keyframes successPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 20px rgba(16, 185, 129, 0);
+        }
+      }
+
+      @keyframes errorShake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      .modal-icon::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: rotate(45deg);
+        animation: shine 3s ease-in-out infinite;
+      }
+
+      @keyframes shine {
+        0%,
+        100% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        50% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+      }
+
+      .modal-body {
+        padding: 1rem 2rem 2rem;
+        text-align: center;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--light-text);
+        margin-bottom: 1rem;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .success-modal .modal-title {
+        background: var(--gradient-3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .error-modal .modal-title {
+        background: var(--gradient-2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .modal-message {
+        color: var(--muted-text);
+        line-height: 1.6;
+        font-size: 1rem;
+      }
+
+      .modal-footer {
+        padding: 1rem 2rem 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .modal-btn {
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .success-btn {
+        background: var(--gradient-3);
+        color: white;
+      }
+
+      .error-btn {
+        background: var(--gradient-2);
+        color: white;
+      }
+
+      .secondary-btn {
+        background: transparent;
+        color: var(--light-text);
+        border: 2px solid var(--primary-color);
+      }
+
+      .modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .success-btn:hover {
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+      }
+
+      .error-btn:hover {
+        box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+      }
+
+      .secondary-btn:hover {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .modal-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .modal-btn:hover::before {
+        left: 100%;
+      }
+
+      /* Floating particles in modal */
+      .modal-container::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(
+            circle at 20% 50%,
+            rgba(99, 102, 241, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 60% 30%,
+            rgba(236, 72, 153, 0.1) 1px,
+            transparent 1px
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(6, 182, 212, 0.1) 1px,
+            transparent 1px
+          );
+        background-size: 50px 50px, 30px 30px, 40px 40px;
+        animation: floatingDots 20s ease-in-out infinite;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      @keyframes floatingDots {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        33% {
+          transform: translate(10px, -10px);
+        }
+        66% {
+          transform: translate(-5px, 15px);
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .modal-container {
+          margin: 1rem;
+          border-radius: 20px;
+        }
+
+        .modal-header {
+          padding: 2rem 1.5rem 1rem;
+        }
+
+        .modal-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+
+        .modal-body {
+          padding: 1rem 1.5rem;
+        }
+
+        .modal-title {
+          font-size: 1.3rem;
+        }
+
+        .modal-message {
+          font-size: 0.9rem;
+        }
+
+        .modal-footer {
+          padding: 1rem 1.5rem 2rem;
+          flex-direction: column;
+        }
+
+        .modal-btn {
+          width: 100%;
+          min-width: auto;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .modal-container {
+          width: 95%;
+          margin: 0.5rem;
+        }
+
+        .modal-header {
+          padding: 1.5rem 1rem 0.5rem;
+        }
+
+        .modal-body {
+          padding: 0.5rem 1rem 1rem;
+        }
+
+        .modal-footer {
+          padding: 1rem 1rem 1.5rem;
+        }
+      }
+
+      /* Dark overlay animation */
+      .modal-overlay::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: radial-gradient(
+          circle,
+          rgba(99, 102, 241, 0.1) 0%,
+          transparent 70%
+        );
+        transform: translate(-50%, -50%);
+        transition: all 0.6s ease;
+        border-radius: 50%;
+      }
+
+      .modal-overlay.show::before {
+        width: 100vw;
+        height: 100vw;
+      }
+
+      /* Success modal specific animations */
+      .success-modal .modal-icon i {
+        animation: checkMark 0.6s ease-in-out 0.2s both;
+      }
+
+      @keyframes checkMark {
+        0% {
+          transform: scale(0) rotate(-45deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(-45deg);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+
+      /* Error modal specific animations */
+      .error-modal .modal-icon i {
+        animation: errorIcon 0.6s ease-in-out 0.2s both;
+      }
+
+      @keyframes errorIcon {
+        0% {
+          transform: scale(0) rotate(-180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(-90deg);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+      /* Loading Modal Specific Styles */
+      .modal-container .modal-icon .fa-spinner {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Warning Modal Styles */
+      .warning-modal .modal-header::before {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+      }
+
+      .warning-modal .modal-title {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .warning-icon {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        animation: warningPulse 2s ease-in-out infinite;
+      }
+
+      @keyframes warningPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 0 20px rgba(245, 158, 11, 0);
+        }
+      }
+
+      .warning-btn {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+      }
+
+      .warning-btn:hover {
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+      }
+
+      /* Loading Modal Pulse Effect */
+      .modal-container .modal-icon .fa-spinner {
+        color: white;
+        font-size: 2rem;
+      }
+
+      /* Loading Modal Breathing Effect */
+      #loadingModal .modal-container {
+        animation: breathe 2s ease-in-out infinite;
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.02);
+        }
+      }
+    </style>
   </head>
   <body>
     <!-- Loading Screen -->
@@ -1381,7 +1877,7 @@
             <i class="fas fa-phone contact-icon"></i>
             <div class="contact-details">
               <h4>Phone</h4>
-              <p>+91-8086694790</p>
+              <p>+91-8089964790</p>
             </div>
           </div>
           <div class="contact-item">
@@ -1400,7 +1896,7 @@
           </div>
         </div>
         <div class="contact-form slide-in-right">
-          <form>
+          <form id="contact-form">
             <div class="form-group">
               <label for="name">Name</label>
               <input type="text" id="name" name="name" required />
@@ -1417,10 +1913,17 @@
               <label for="message">Message</label>
               <textarea id="message" name="message" required></textarea>
             </div>
+            <div
+              class="g-recaptcha"
+              style="padding-top: 30px; padding-bottom: 30px"
+              data-sitekey="6LcaWbArAAAAAAn4E65vQwPgsMIc33w5hzM_3XUp"
+            ></div>
+
             <button type="submit" class="btn btn-primary">
               <i class="fas fa-paper-plane"></i>
               Send Message
             </button>
+            <!-- reCAPTCHA widget -->
           </form>
         </div>
       </div>
@@ -1432,7 +1935,7 @@
         <a href="mailto:mahrooft270@gmail.com" class="social-link">
           <i class="fas fa-envelope"></i>
         </a>
-        <a href="tel:+918086694790" class="social-link">
+        <a href="tel:+918089964790" class="social-link">
           <i class="fas fa-phone"></i>
         </a>
         <a
@@ -1457,6 +1960,273 @@
     <button class="scroll-top" id="scrollTop">
       <i class="fas fa-arrow-up"></i>
     </button>
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal">
+      <div class="modal-container success-modal">
+        <div class="modal-header">
+          <div class="modal-icon success-icon">
+            <i class="fas fa-check"></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h3 class="modal-title">Message Sent Successfully!</h3>
+          <p class="modal-message">
+            Thank you for reaching out! Your message has been sent and I'll get
+            back to you soon.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="modal-btn success-btn"
+            onclick="hideModal('successModal')"
+          >
+            <i class="fas fa-thumbs-up"></i>
+            Awesome
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal-overlay" id="errorModal">
+      <div class="modal-container error-modal">
+        <div class="modal-header">
+          <div class="modal-icon error-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h3 class="modal-title">Oops! Something went wrong</h3>
+          <p class="modal-message">
+            There was an issue sending your message. Please try again or contact
+            me directly at mahrooft270@gmail.com
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn error-btn" onclick="hideModal('errorModal')">
+            <i class="fas fa-redo"></i>
+            Try Again
+          </button>
+          <button
+            class="modal-btn secondary-btn"
+            onclick="window.location.href='mailto:mahrooft270@gmail.com'"
+          >
+            <i class="fas fa-envelope"></i>
+            Direct Email
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Warning Modal for reCAPTCHA -->
+    <div class="modal-overlay" id="warningModal">
+      <div class="modal-container warning-modal">
+        <div class="modal-header">
+          <div class="modal-icon warning-icon">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h3 class="modal-title">reCAPTCHA Required</h3>
+          <p class="modal-message">
+            Please complete the reCAPTCHA verification to send your message.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="modal-btn warning-btn"
+            onclick="hideModal('warningModal')"
+          >
+            <i class="fas fa-check"></i>
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Loading Modal (Optional) -->
+    <div class="modal-overlay" id="loadingModal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-icon" style="background: var(--gradient-1)">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h3 class="modal-title">Sending Message...</h3>
+          <p class="modal-message">Please wait while we send your message.</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Modal Functions
+      function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.add("show");
+          document.body.style.overflow = "hidden"; // Prevent background scrolling
+
+          // Auto-hide success modal after 5 seconds
+          if (modalId === "successModal") {
+            setTimeout(() => {
+              hideModal(modalId);
+            }, 5000);
+          }
+        }
+      }
+
+      function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.remove("show");
+          document.body.style.overflow = "auto"; // Restore scrolling
+        }
+      }
+
+      // Close modal when clicking outside
+      document.querySelectorAll(".modal-overlay").forEach((overlay) => {
+        overlay.addEventListener("click", function (e) {
+          if (e.target === this) {
+            hideModal(this.id);
+          }
+        });
+      });
+
+      // Close modal with Escape key
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          document.querySelectorAll(".modal-overlay.show").forEach((modal) => {
+            hideModal(modal.id);
+          });
+        }
+      });
+      // Enhanced modal functions with loading support
+      function showLoadingModal() {
+        showModal("loadingModal");
+      }
+
+      function hideLoadingModal() {
+        hideModal("loadingModal");
+      }
+      // Add some extra animation effects
+      function addModalEffects() {
+        // Add ripple effect to buttons
+        document.querySelectorAll(".modal-btn").forEach((btn) => {
+          btn.addEventListener("click", function (e) {
+            const ripple = document.createElement("span");
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                width: ${size}px;
+                height: ${size}px;
+                left: ${x}px;
+                top: ${y}px;
+            `;
+
+            this.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+          });
+        });
+      }
+
+      // Add ripple animation CSS
+      const rippleCSS = `
+          @keyframes ripple {
+              to {
+                  transform: scale(4);
+                  opacity: 0;
+              }
+          }
+      `;
+
+      const rippleStyle = document.createElement("style");
+      rippleStyle.textContent = rippleCSS;
+      document.head.appendChild(rippleStyle);
+
+      // Initialize modal effects when DOM is loaded
+      document.addEventListener("DOMContentLoaded", addModalEffects);
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbwvTidqvD99dchJnV77HKaZOcrZmz-Y2AfqOtwWnLTqNFYLVCcWopgl9BdBzy6tLpe2/exec"; // <-- paste your Google Apps Script URL here
+
+      document
+        .getElementById("contact-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const recaptchaResponse = grecaptcha.getResponse();
+          if (!recaptchaResponse) {
+            showModal("warningModal");
+            return;
+          }
+
+          // Show loading modal
+          showModal("loadingModal");
+
+          // Collect form data
+          const formData = {
+            name: this.name.value,
+            email: this.email.value,
+            subject: this.subject.value,
+            message: this.message.value,
+            recaptcha: recaptchaResponse,
+          };
+
+          // Send data to Google Apps Script with proper CORS
+          fetch(scriptURL, {
+            method: "POST",
+            body: JSON.stringify(formData),
+          })
+            .then(async (response) => {
+              hideModal("loadingModal");
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const data = await response.json();
+
+              if (data.status === "ok") {
+                // ✅ Success
+                setTimeout(() => {
+                  showModal("successModal");
+                }, 200);
+
+                this.reset();
+                grecaptcha.reset();
+              } else {
+                // ❌ Fail
+                if (data.reason && data.reason.includes("reCAPTCHA")) {
+                  // Captcha specific error
+                  showCaptchaErrorModal();
+                } else {
+                  // General error
+                  showModal("errorModal");
+                }
+                grecaptcha.reset();
+              }
+            })
+            .catch((error) => {
+              hideModal("loadingModal");
+
+              setTimeout(() => {
+                showModal("errorModal");
+              }, 200);
+
+              grecaptcha.reset();
+              console.error("Network Error:", error);
+            });
+        });
+    </script>
 
     <script>
       // Loading Screen
@@ -1544,33 +2314,33 @@
       });
 
       // Form submission
-      document
-        .querySelector(".contact-form form")
-        .addEventListener("submit", (e) => {
-          e.preventDefault();
+      // document
+      //   .querySelector(".contact-form form")
+      //   .addEventListener("submit", (e) => {
+      //     e.preventDefault();
 
-          // Get form data
-          const formData = new FormData(e.target);
-          const name = formData.get("name");
-          const email = formData.get("email");
-          const subject = formData.get("subject");
-          const message = formData.get("message");
+      //     // Get form data
+      //     const formData = new FormData(e.target);
+      //     const name = formData.get("name");
+      //     const email = formData.get("email");
+      //     const subject = formData.get("subject");
+      //     const message = formData.get("message");
 
-          // Create mailto link
-          const mailtoLink = `mailto:mahrooft270@gmail.com?subject=${encodeURIComponent(
-            subject
-          )}&body=${encodeURIComponent(
-            `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
-          )}`;
+      //     // Create mailto link
+      //     const mailtoLink = `mailto:mahrooft270@gmail.com?subject=${encodeURIComponent(
+      //       subject
+      //     )}&body=${encodeURIComponent(
+      //       `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+      //     )}`;
 
-          // Open email client
-          window.location.href = mailtoLink;
+      //     // Open email client
+      //     window.location.href = mailtoLink;
 
-          // Show success message (you can customize this)
-          alert(
-            "Thank you for your message! Your email client should open now."
-          );
-        });
+      //     // Show success message (you can customize this)
+      //     alert(
+      //       "Thank you for your message! Your email client should open now."
+      //     );
+      //   });
 
       // Mobile menu toggle (basic implementation)
       document.querySelector(".mobile-menu").addEventListener("click", () => {
